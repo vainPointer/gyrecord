@@ -8,11 +8,12 @@
 	var last_time = 0;
 	var rate = 0.0;
 	var content = "";
+
 	function motionlistener(event) {
 		var d = new Date();
-		var t = d.getTime(); 
+		var t = d.getTime();
 		var r = event.rotationRate;
-		var a = event.accelerationIncludingGravity;
+		var a = event.acceleration;
 
 		if (counter % 100 == 0) {
 			if (last_time != 0) {
@@ -21,14 +22,14 @@
 			}	
 			last_time = t;
 
-			html = 'Rotation rate:<br />';
-			html += 'alpha: ' + r.alpha +'<br />beta: ' + r.beta + '<br/>gamma: ' + r.gamma + '<br />';
+			html = 'Reported update interval (msec): ' + event.interval + '<br />';
+			html += 'Calculated rate (samples per sec): ' + rate + '<br />';
+
+			html += 'Rotation rate:<br />';
+			html += 'alpha: ' + r.alpha +'<br />beta: ' + r.beta + '<br />gamma: ' + r.gamma + '<br />';
 
 		    html += 'Acceleration:<br />';
-	        html += 'x: ' + a.x +'<br />y: ' + a.y + '<br/>z: ' + a.z+ '<br />';
-
-			html += 'Reported update interval (msec): ' + event.interval + '<br />';
-			html += 'Calculated rate (samples per sec): ' + rate + '<br />';
+	        html += 'x: ' + a.x +'<br />y: ' + a.y + '<br />z: ' + a.z+ '<br />';
 
 			dataContainerMotion.innerHTML = html;  
 
@@ -37,38 +38,45 @@
 		counter += 1;
 
 		if(r!=null) {
-			content += (t + '\t' + r.alpha + '\t' + r.beta + '\t' + r.gamma + '\t' + a.x + '\t' + a.y + '\t' + a.z + '\n');
+			content += (t + '\t' + r.alpha + '\t' + r.beta + '\t' + r.gamma + '\t' + a.x + '\t' + a.y + '\t' + a.z + '\t');
 		}
 		else {
 			html += 'No Rotation Data! <br />';
 		}
 	}
+
+	function orientationlistener(event) {
+		var d = new Date();
+		var t = d.getTime();
+		var alpha = event.alpha;
+		var beta = event.beta;
+		var gamma = event.gamma;
+
+		if (counter % 100 == 0) {
+			html = 'Orientation:<br />'
+			html += 'alpha: ' + alpha + '<br />beta: ' + beta + '<br />gamma: ' + gamma + '<br />';
+
+			dataContainerOrientation.innerHTML = html;
+		}
+
+		content += (alpha + '\t' + beta + '\t' + gamma + '\n');
+	}
 	
 	function init() {
 		console.log('Start recording samples...');
-		//Find our div containers in the DOM
-		//var dataContainerOrientation = document.getElementById('dataContainerOrientation');
 		var dataContainerMotion = document.getElementById('dataContainerMotion');
+		var dataContainerOrientation = document.getElementById('dataContainerOrientation');
 		var btn = document.getElementById('action');
 		btn.innerHTML = "Save";
 		btn.onclick = save;
 
-      //Check for support for DeviceOrientation event
-      //if(window.DeviceOrientationEvent) {
-      //  window.addEventListener('deviceorientation', function(event) {
-      //          var alpha = event.alpha;
-      //          var beta = event.beta;
-      //          var gamma = event.gamma;
-      //	
-      //          if(alpha!=null || beta!=null || gamma!=null) 
-      //            dataContainerOrientation.innerHTML = 'alpha: ' + alpha + '<br/>beta: ' + beta + '<br />gamma: ' //+ gamma;
-      //        }, false);
-      //}
+        if(window.DeviceMotionEvent) {
+			window.addEventListener('devicemotion', motionlistener);
+        }
 
-      //Check for support for DeviceMotion events
-      if(window.DeviceMotionEvent) {
-				window.addEventListener('devicemotion', motionlistener);
-      }
+        if(window.DeviceOrientationEvent) {
+        	window.addEventListener('deviceorientation', orientationlistener);
+        }
     }
 	
 	function save() {
@@ -91,15 +99,15 @@
 		// filedl.src = uriContent;
 	}
 </script>
-  
-
-    <!--<div id="dataContainerOrientation">
-      No device orientation data
-    </div> -->
     
     <div id="dataContainerMotion">
       No device motion data
     </div>
+  
+    <div id="dataContainerOrientation">
+      No device orientation data
+    </div>
+
 	<button id="action" onclick="init()">Start Recording</button>
 	
 	<!--
