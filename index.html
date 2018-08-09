@@ -78,14 +78,14 @@
         	window.addEventListener('deviceorientation', orientationlistener);
         }
 
-        var obj = document.getElementById('touching');
-        obj.addEventListener('touchstart', function(event) {
+        var touchLocation = document.getElementById('touching');
+        window.addEventListener('touchstart', function(event) {
         	if (event.targetTouches.length == 1) {
         		event.preventDefault();
         		var touch = event.touches[0];
         		var x = Number(touch.screenX);
         		var y = Number(touch.screenY);
-        		touching.innerHTML = '(' + x + ',' + y + ')';
+        		touchLocation.innerHTML = '(' + x + ',' + y + ')';
         	}
         }, false);
     }
