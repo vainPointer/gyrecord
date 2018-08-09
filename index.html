@@ -8,6 +8,7 @@
 	var last_time = 0;
 	var rate = 0.0;
 	var content = "";
+	var content1 = "";
 
 	function motionlistener(event) {
 		var d = new Date();
@@ -31,14 +32,13 @@
 		    html += 'Acceleration:<br />';
 	        html += 'x: ' + a.x +'<br />y: ' + a.y + '<br />z: ' + a.z+ '<br />';
 
-			dataContainerMotion.innerHTML = html;  
-
+			dataContainerMotion.innerHTML = html;
 		}
 
 		counter += 1;
 
 		if(r!=null) {
-			content += (t + '\t' + r.alpha + '\t' + r.beta + '\t' + r.gamma + '\t' + a.x + '\t' + a.y + '\t' + a.z + '\t');
+			content += (t + '\t' + r.alpha + '\t' + r.beta + '\t' + r.gamma + '\t' + a.x + '\t' + a.y + '\t' + a.z + '\n');
 		}
 		else {
 			html += 'No Rotation Data! <br />';
@@ -59,7 +59,7 @@
 			dataContainerOrientation.innerHTML = html;
 		}
 
-		content += (alpha + '\t' + beta + '\t' + gamma + '\n');
+		content1 += (t + '\t' + alpha + '\t' + beta + '\t' + gamma + '\n');
 	}
 	
 	function init() {
@@ -82,17 +82,28 @@
 	function save() {
 		var MIME_TYPE = "text/csv";
 		window.removeEventListener('devicemotion', motionlistener);
+		window.removeEventListener('deviceorientation', orientationlistener);
 		console.log('Saving samples...');
 		var blob = new Blob([content], {type:MIME_TYPE});
 		var dummyLink = document.createElement('a');
-		dummyLink.download = 'gyro.csv';
+		dummyLink.download = 'motion.csv';
 		dummyLink.href = window.URL.createObjectURL(blob);
-		dummyLink.textContent = 'Download';
+		dummyLink.textContent = 'Motion';
 		dummyLink.dataset.downloadurl = 
 			[MIME_TYPE, dummyLink.download, dummyLink.href].join(':');
-
 		var body = document.getElementsByTagName('body')[0];
 		body.appendChild(dummyLink);
+
+
+		var blob1 = new Blob([content1], {type:MIME_TYPE});
+		var dummyLink1 = document.createElement('a');
+		dummyLink1.download = 'orientation.csv';
+		dummyLink1.href = window.URL.createObjectURL(blob1);
+		dummyLink1.textContent = 'Orientation';
+		dummyLink1.dataset.downloadurl = 
+			[MIME_TYPE, dummyLink1.download, dummyLink1.href].join(':');
+		var body1 = document.getElementsByTagName('body')[0];
+		body1.appendChild(dummyLink1);
 
 		// var uriContent = "data:test/csv," + encodeURIComponent(content);
 		// var filedl = document.getElementById('filedl');
