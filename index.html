@@ -77,6 +77,17 @@
         if(window.DeviceOrientationEvent) {
         	window.addEventListener('deviceorientation', orientationlistener);
         }
+
+        var obj = document.getElementById('touching');
+        obj.addEventListener('touchstart', function(event) {
+        	if (event.targetTouches.length == 1) {
+        		event.preventDefault();
+        		var touch = event.touches[0];
+        		var x = Number(touch.screenX);
+        		var y = Number(touch.screenY);
+        		touching.innerHTML = '(' + x + ',' + y + ')';
+        	}
+        }, false);
     }
 	
 	function save() {
@@ -88,7 +99,7 @@
 		var dummyLink = document.createElement('a');
 		dummyLink.download = 'motion.csv';
 		dummyLink.href = window.URL.createObjectURL(blob);
-		dummyLink.textContent = 'Motion';
+		dummyLink.textContent = 'Motion ';
 		dummyLink.dataset.downloadurl = 
 			[MIME_TYPE, dummyLink.download, dummyLink.href].join(':');
 		var body = document.getElementsByTagName('body')[0];
@@ -99,7 +110,7 @@
 		var dummyLink1 = document.createElement('a');
 		dummyLink1.download = 'orientation.csv';
 		dummyLink1.href = window.URL.createObjectURL(blob1);
-		dummyLink1.textContent = 'Orientation';
+		dummyLink1.textContent = 'Orientation ';
 		dummyLink1.dataset.downloadurl = 
 			[MIME_TYPE, dummyLink1.download, dummyLink1.href].join(':');
 		var body1 = document.getElementsByTagName('body')[0];
@@ -112,11 +123,15 @@
 </script>
     
     <div id="dataContainerMotion">
-      No device motion data
+    	No device motion data
     </div>
-  
+
     <div id="dataContainerOrientation">
-      No device orientation data
+    	No device orientation data
+    </div>
+
+    <div id="touching">
+    	No touching data
     </div>
 
 	<button id="action" onclick="init()">Start Recording</button>
