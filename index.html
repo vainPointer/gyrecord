@@ -7,11 +7,18 @@
 	var counter = 0;
 	var last_time = 0;
 	var rate = 0.0;
-	var content = "";
-	var content1 = "";
+	var contentLetter = "";
+	var contentMotion = "";
+	var contentOrientation = "";
 
 	function keylistener(letter) {
-		dataContainerInputs.innerHTML = letter;
+		var d = new Date();
+		var t = d.getTime();
+		var l = letter;
+
+		dataContainerInputs.innerHTML += l;
+		contentLetter += (t + '\t' + l + '\n');
+		document.getElementById("inputLetter").value = '';
 	}
 
 	function motionlistener(event) {
@@ -42,7 +49,7 @@
 		counter += 1;
 
 		if(r!=null) {
-			content += (t + '\t' + r.alpha + '\t' + r.beta + '\t' + r.gamma + '\t' + a.x + '\t' + a.y + '\t' + a.z + '\n');
+			contentMotion += (t + '\t' + r.alpha + '\t' + r.beta + '\t' + r.gamma + '\t' + a.x + '\t' + a.y + '\t' + a.z + '\n');
 		}
 		else {
 			html += 'No Rotation Data! <br />';
@@ -63,28 +70,28 @@
 			dataContainerOrientation.innerHTML = html;
 		}
 
-		content1 += (t + '\t' + alpha + '\t' + beta + '\t' + gamma + '\n');
+		contentOrientation += (t + '\t' + alpha + '\t' + beta + '\t' + gamma + '\n');
 	}
 	
 	function init() {
 		console.log('Start recording samples...');
 		var dataContainerInputs = document.getElementById('dataContainerInputs');
-        var dataContainerTouches = document.getElementById('dataContainerTouches');
+        //var dataContainerTouches = document.getElementById('dataContainerTouches');
 		var dataContainerMotion = document.getElementById('dataContainerMotion');
 		var dataContainerOrientation = document.getElementById('dataContainerOrientation');
 		var btn = document.getElementById('action');
 		btn.innerHTML = "Save";
 		btn.onclick = save;
 
-        window.addEventListener('touchstart', function(event) {
-        	if (event.targetTouches.length == 1) {
-        		event.preventDefault();
-        		var touch = event.touches[0];
-        		var x = Number(touch.screenX);
-        		var y = Number(touch.screenY);
-        		dataContainerTouches.innerHTML = '(' + x + ',' + y + ')';
-        	}
-        }, false);
+        //window.addEventListener('touchstart', function(event) {
+        //	if (event.targetTouches.length == 1) {
+        //		event.preventDefault();
+        //		var touch = event.touches[0];
+        //		var x = Number(touch.screenX);
+        //		var y = Number(touch.screenY);
+        //		dataContainerTouches.innerHTML = '(' + x + ',' + y + ')';
+        //	}
+        //}, false);
 
         if(window.DeviceMotionEvent) {
 			window.addEventListener('devicemotion', motionlistener);
@@ -100,41 +107,52 @@
 		window.removeEventListener('devicemotion', motionlistener);
 		window.removeEventListener('deviceorientation', orientationlistener);
 		console.log('Saving samples...');
-		var blob = new Blob([content], {type:MIME_TYPE});
-		var dummyLink = document.createElement('a');
-		dummyLink.download = 'motion.csv';
-		dummyLink.href = window.URL.createObjectURL(blob);
-		dummyLink.textContent = 'Motion ';
-		dummyLink.dataset.downloadurl = 
-			[MIME_TYPE, dummyLink.download, dummyLink.href].join(':');
-		var body = document.getElementsByTagName('body')[0];
-		body.appendChild(dummyLink);
+
+		var blobLetter = new Blob([contentLetter], {type:MIME_TYPE});
+		var dummyLinkLetter = document.createElement('a');
+		dummyLinkLetter.download = 'letter.csv';
+		dummyLinkLetter.href = window.URL.createObjectURL(blobLetter);
+		dummyLinkLetter.textContent = 'Letter ';
+		dummyLinkLetter.dataset.downloadurl = 
+			[MIME_TYPE, dummyLinkLetter.download, dummyLinkLetter.href].join(':');
+		var bodyLetter = document.getElementsByTagName('body')[0];
+		bodyLetter.appendChild(dummyLinkLetter);
+
+		var blobMotion = new Blob([contentMotion], {type:MIME_TYPE});
+		var dummyLinkMotion = document.createElement('a');
+		dummyLinkMotion.download = 'motion.csv';
+		dummyLinkMotion.href = window.URL.createObjectURL(blobMotion);
+		dummyLinkMotion.textContent = 'Motion ';
+		dummyLinkMotion.dataset.downloadurl = 
+			[MIME_TYPE, dummyLinkMotion.download, dummyLinkMotion.href].join(':');
+		var bodyMotion = document.getElementsByTagName('body')[0];
+		bodyMotion.appendChild(dummyLinkMotion);
 
 
-		var blob1 = new Blob([content1], {type:MIME_TYPE});
-		var dummyLink1 = document.createElement('a');
-		dummyLink1.download = 'orientation.csv';
-		dummyLink1.href = window.URL.createObjectURL(blob1);
-		dummyLink1.textContent = 'Orientation ';
-		dummyLink1.dataset.downloadurl = 
-			[MIME_TYPE, dummyLink1.download, dummyLink1.href].join(':');
-		var body1 = document.getElementsByTagName('body')[0];
-		body1.appendChild(dummyLink1);
+		var blobOrien = new Blob([contentOrientation], {type:MIME_TYPE});
+		var dummyLinkOrientation = document.createElement('a');
+		dummyLinkOrientation.download = 'orientation.csv';
+		dummyLinkOrientation.href = window.URL.createObjectURL(blobOrien);
+		dummyLinkOrientation.textContent = 'Orientation ';
+		dummyLinkOrientation.dataset.downloadurl = 
+			[MIME_TYPE, dummyLinkOrientation.download, dummyLinkOrientation.href].join(':');
+		var bodyOrientation = document.getElementsByTagName('body')[0];
+		bodyOrientation.appendChild(dummyLinkOrientation);
 
 		// var uriContent = "data:test/csv," + encodeURIComponent(content);
 		// var filedl = document.getElementById('filedl');
 		// filedl.src = uriContent;
 	}
 </script>
-	<input type="text" onkeydown="keylistener(this.value)" onkeyup="keylistener(this.value)" />
+	<input id="inputLetter" type="text" onkeydown="keylistener(this.value)" />
 
 	<div id="dataContainerInputs">
-		No input data
+		The input letter is: 
 	</div>
 
-    <div id="dataContainerTouches">
+    <!--<div id="dataContainerTouches">
     	No screen touching data
-    </div>
+    </div>-->
     
     <div id="dataContainerMotion">
     	No device motion data
