@@ -64,11 +64,22 @@
 	
 	function init() {
 		console.log('Start recording samples...');
+        var dataContainerTouches = document.getElementById('dataContainerTouches');
 		var dataContainerMotion = document.getElementById('dataContainerMotion');
 		var dataContainerOrientation = document.getElementById('dataContainerOrientation');
 		var btn = document.getElementById('action');
 		btn.innerHTML = "Save";
 		btn.onclick = save;
+
+        window.addEventListener('touchstart', function(event) {
+        	if (event.targetTouches.length == 1) {
+        		event.preventDefault();
+        		var touch = event.touches[0];
+        		var x = Number(touch.screenX);
+        		var y = Number(touch.screenY);
+        		dataContainerTouches.innerHTML = '(' + x + ',' + y + ')';
+        	}
+        }, false);
 
         if(window.DeviceMotionEvent) {
 			window.addEventListener('devicemotion', motionlistener);
@@ -77,17 +88,6 @@
         if(window.DeviceOrientationEvent) {
         	window.addEventListener('deviceorientation', orientationlistener);
         }
-
-        var touchLocation = document.getElementById('touching');
-        window.addEventListener('touchstart', function(event) {
-        	if (event.targetTouches.length == 1) {
-        		event.preventDefault();
-        		var touch = event.touches[0];
-        		var x = Number(touch.screenX);
-        		var y = Number(touch.screenY);
-        		touchLocation.innerHTML = '(' + x + ',' + y + ')';
-        	}
-        }, false);
     }
 	
 	function save() {
@@ -121,6 +121,11 @@
 		// filedl.src = uriContent;
 	}
 </script>
+	<input type="text" />
+
+    <div id="dataContainerTouches">
+    	No screen touching data
+    </div>
     
     <div id="dataContainerMotion">
     	No device motion data
@@ -130,9 +135,6 @@
     	No device orientation data
     </div>
 
-    <div id="touching">
-    	No touching data
-    </div>
 
 	<button id="action" onclick="init()">Start Recording</button>
 	
