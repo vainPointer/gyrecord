@@ -10,6 +10,10 @@
 	var content = "";
 	var content1 = "";
 
+	function keylistener(letter) {
+		dataContainerInputs.innerHTML = letter;
+	}
+
 	function motionlistener(event) {
 		var d = new Date();
 		var t = d.getTime();
@@ -64,6 +68,7 @@
 	
 	function init() {
 		console.log('Start recording samples...');
+		var dataContainerInputs = document.getElementById('dataContainerInputs');
         var dataContainerTouches = document.getElementById('dataContainerTouches');
 		var dataContainerMotion = document.getElementById('dataContainerMotion');
 		var dataContainerOrientation = document.getElementById('dataContainerOrientation');
@@ -121,7 +126,11 @@
 		// filedl.src = uriContent;
 	}
 </script>
-	<input type="text" />
+	<input type="text" onkeydown="keylistener(this.value)" onkeyup="keylistener(this.value)" />
+
+	<div id="dataContainerInputs">
+		No input data
+	</div>
 
     <div id="dataContainerTouches">
     	No screen touching data
