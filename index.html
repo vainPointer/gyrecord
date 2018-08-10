@@ -16,7 +16,7 @@
 		var t = d.getTime();
 		var l = letter;
 
-		dataContainerInputs.innerHTML += l;
+		dataContainerInputs.innerHTML = "The input letter is: " + l;
 		contentLetter += (t + '\t' + l + '\n');
 		document.getElementById("inputLetter").value = '';
 	}
